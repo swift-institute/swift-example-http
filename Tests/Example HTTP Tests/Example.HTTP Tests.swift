@@ -1,3 +1,4 @@
+import Byte_Primitive
 import Coder_Primitive
 import Client
 import Client_Remote
@@ -58,6 +59,20 @@ struct `Example.HTTP Tests` {
             try Example.Counter.http.response.parse(&response)
                 == .left(.limit(reached: .init(3)))
         )
+    }
+
+    @Test
+    func `the wire bytes of a representation are exact`() throws {
+        var request: HTTP.Request?
+        try Example.Greeting.http.request.serialize(.init("Ada"), into: &request)
+        #expect(request?.body == ([0x41, 0x64, 0x61] as [UInt8]).map(Byte.init))
+
+        var refusal: HTTP.Coding.Body.Text<Example.Counter.Error>.Buffer = nil
+        try Example.Counter.Error.text.serialize(
+            .limit(reached: .init(3)),
+            into: &refusal
+        )
+        #expect(refusal == ([0x33] as [UInt8]).map(Byte.init))
     }
 
     @Test

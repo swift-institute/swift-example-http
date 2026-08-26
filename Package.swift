@@ -119,6 +119,7 @@ let package = Package(
             dependencies: [
                 "Example Greeting HTTP",
                 "Example Counter HTTP",
+                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
                 .product(name: "Client", package: "swift-client"),
                 .product(name: "Client Remote", package: "swift-client-remote"),
                 .product(name: "Example", package: "swift-example"),
