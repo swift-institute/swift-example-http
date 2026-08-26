@@ -20,6 +20,14 @@ let package = Package(
             name: "Example Counter HTTP",
             targets: ["Example Counter HTTP"]
         ),
+        .library(
+            name: "Example Greeting Route",
+            targets: ["Example Greeting Route"]
+        ),
+        .library(
+            name: "Example Counter Route",
+            targets: ["Example Counter Route"]
+        ),
     ],
     dependencies: [
         .package(
@@ -56,6 +64,10 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/swift-foundations/swift-http-responder.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
             branch: "main"
         ),
         .package(
@@ -136,6 +148,80 @@ let package = Package(
                 .product(name: "Coder Primitive", package: "swift-coder-primitives"),
                 .product(name: "HTTP Responder", package: "swift-http-responder"),
                 .product(name: "Either Primitives", package: "swift-either-primitives"),
+                .product(name: "Parser Primitive", package: "swift-parser-primitives"),
+                .product(
+                    name: "Serializer Primitive",
+                    package: "swift-serializer-primitives"
+                ),
+            ]
+        ),
+        .target(
+            name: "Example Greeting Route",
+            dependencies: [
+                "Example Greeting HTTP",
+                .product(name: "Example", package: "swift-example"),
+                .product(name: "Example Greeting", package: "swift-example"),
+                .product(
+                    name: "Example Greeting Client",
+                    package: "swift-example-client"
+                ),
+                .product(name: "HTTP", package: "swift-http"),
+                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
+                .product(name: "Parser Skip Primitives", package: "swift-parser-primitives"),
+            ]
+        ),
+        .target(
+            name: "Example Counter Route",
+            dependencies: [
+                "Example Counter HTTP",
+                .product(name: "Example", package: "swift-example"),
+                .product(name: "Example Counter", package: "swift-example"),
+                .product(
+                    name: "Example Counter Client",
+                    package: "swift-example-client"
+                ),
+                .product(name: "HTTP", package: "swift-http"),
+                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
+                .product(name: "Parser Skip Primitives", package: "swift-parser-primitives"),
+            ]
+        ),
+        .testTarget(
+            name: "Example Greeting Route Tests",
+            dependencies: [
+                "Example Greeting Route",
+                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
+                .product(name: "Example", package: "swift-example"),
+                .product(name: "Example Greeting", package: "swift-example"),
+                .product(
+                    name: "Example Greeting Client",
+                    package: "swift-example-client"
+                ),
+                .product(name: "HTTP", package: "swift-http"),
+                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
+                .product(name: "Parser Primitive", package: "swift-parser-primitives"),
+                .product(
+                    name: "Serializer Primitive",
+                    package: "swift-serializer-primitives"
+                ),
+            ]
+        ),
+        .testTarget(
+            name: "Example Counter Route Tests",
+            dependencies: [
+                "Example Counter Route",
+                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
+                .product(name: "Example", package: "swift-example"),
+                .product(name: "Example Counter", package: "swift-example"),
+                .product(
+                    name: "Example Counter Client",
+                    package: "swift-example-client"
+                ),
+                .product(name: "HTTP", package: "swift-http"),
+                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
                 .product(name: "Parser Primitive", package: "swift-parser-primitives"),
                 .product(
                     name: "Serializer Primitive",
