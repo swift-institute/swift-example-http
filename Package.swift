@@ -85,25 +85,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
-                .product(name: "Example Greeting Client", package: "swift-example-client"),
-                .product(
-                    name: "Example Greeting Client Remote",
-                    package: "swift-example-client-remote"
-                ),
-                .product(name: "Client", package: "swift-client"),
-                .product(name: "Client Remote", package: "swift-client-remote"),
                 .product(name: "HTTP", package: "swift-http"),
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
-                .product(name: "HTTP Client", package: "swift-http-client"),
-                .product(name: "HTTP Responder", package: "swift-http-responder"),
                 .product(name: "Coder Primitive", package: "swift-coder-primitives"),
-                .product(name: "Either Primitives", package: "swift-either-primitives"),
-                .product(name: "Parser Primitive", package: "swift-parser-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
-                .product(
-                    name: "Serializer Primitive",
-                    package: "swift-serializer-primitives"
-                ),
             ]
         ),
         .target(
@@ -111,24 +96,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Counter", package: "swift-example"),
-                .product(name: "Example Counter Client", package: "swift-example-client"),
-                .product(
-                    name: "Example Counter Client Remote",
-                    package: "swift-example-client-remote"
-                ),
-                .product(name: "Client", package: "swift-client"),
                 .product(name: "HTTP", package: "swift-http"),
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
-                .product(name: "HTTP Client", package: "swift-http-client"),
-                .product(name: "HTTP Responder", package: "swift-http-responder"),
                 .product(name: "Coder Primitive", package: "swift-coder-primitives"),
-                .product(name: "Either Primitives", package: "swift-either-primitives"),
-                .product(name: "Parser Primitive", package: "swift-parser-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
-                .product(
-                    name: "Serializer Primitive",
-                    package: "swift-serializer-primitives"
-                ),
             ]
         ),
         .testTarget(
@@ -137,6 +108,7 @@ let package = Package(
                 "Example Greeting HTTP",
                 "Example Counter HTTP",
                 .product(name: "Client", package: "swift-client"),
+                .product(name: "Client Remote", package: "swift-client-remote"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
                 .product(name: "Example Counter", package: "swift-example"),
@@ -162,6 +134,7 @@ let package = Package(
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
                 .product(name: "HTTP Client", package: "swift-http-client"),
                 .product(name: "Coder Primitive", package: "swift-coder-primitives"),
+                .product(name: "HTTP Responder", package: "swift-http-responder"),
                 .product(name: "Either Primitives", package: "swift-either-primitives"),
                 .product(name: "Parser Primitive", package: "swift-parser-primitives"),
                 .product(

@@ -1,5 +1,6 @@
 import Coder_Primitive
 import Client
+import Client_Remote
 import Either_Primitives
 import Example
 import Example_Client
@@ -15,6 +16,7 @@ import Example_Greeting_HTTP
 import HTTP
 import HTTP_Client
 import HTTP_Coder
+import HTTP_Responder
 import Parser_Primitive
 import Serializer_Primitive
 import Testing
@@ -40,20 +42,20 @@ struct `Example.HTTP Tests` {
     }
 
     @Test
-    func `endpoint coders round trip domain values`() throws {
+    func `HTTP representations round trip domain values`() throws {
         var request: HTTP.Request?
-        try Example.Greeting.Endpoint.Request().serialize(.init("Ada"), into: &request)
+        try Example.Greeting.http.request.serialize(.init("Ada"), into: &request)
         #expect(
-            try Example.Greeting.Endpoint.Request().parse(&request) == .init("Ada")
+            try Example.Greeting.http.request.parse(&request) == .init("Ada")
         )
 
         var response: HTTP.Response?
-        try Example.Counter.Endpoint.Response().serialize(
+        try Example.Counter.http.response.serialize(
             .left(.limit(reached: .init(3))),
             into: &response
         )
         #expect(
-            try Example.Counter.Endpoint.Response().parse(&response)
+            try Example.Counter.http.response.parse(&response)
                 == .left(.limit(reached: .init(3)))
         )
     }
@@ -65,11 +67,15 @@ struct `Example.HTTP Tests` {
         let local = Self.client(from: .init(0))
         let service = Self.client(from: .init(0))
         let remote = Example.Client.Remote<ExternalFailure>(
-            greeting: Example.Greeting.Endpoint.remote(
-                using: Example.Greeting.Endpoint.responder(using: service.greeting)
+            greeting: .init(
+                greet: Example.Greeting.http.client(
+                    using: Example.Greeting.http.responder(using: service.greeting.greet)
+                ).collapsed()
             ),
-            counter: Example.Counter.Endpoint.remote(
-                using: Example.Counter.Endpoint.responder(using: service.counter)
+            counter: .init(
+                increment: Example.Counter.http.client(
+                    using: Example.Counter.http.responder(using: service.counter.increment)
+                )
             )
         )
 
@@ -95,10 +101,12 @@ struct `Example.HTTP Tests` {
 
     @Test
     func `transport and coding failures remain distinguishable`() async {
-        let unavailable = Example.Greeting.Endpoint.remote(
-            using: HTTP.Client<Outage>(
-                run: { _ throws(Outage) in throw .unavailable }
-            )
+        let unavailable = Example.Greeting.Client.Remote<Either<Outage, HTTP.Coding.Error>>(
+            greet: Example.Greeting.http.client(
+                using: HTTP.Client<Outage>(
+                    run: { _ throws(Outage) in throw .unavailable }
+                )
+            ).collapsed()
         )
         do throws(Either<Outage, HTTP.Coding.Error>) {
             _ = try await unavailable.greet(.init("Ada"))
@@ -107,10 +115,14 @@ struct `Example.HTTP Tests` {
             #expect(error == .left(.unavailable))
         }
 
-        let invalid = Example.Greeting.Endpoint.remote(
-            using: HTTP.Client<Swift.Never>(
-                run: { _ in .init(status: .notFound) }
-            )
+        let invalid = Example.Greeting.Client.Remote<
+            Either<Swift.Never, HTTP.Coding.Error>
+        >(
+            greet: Example.Greeting.http.client(
+                using: HTTP.Client<Swift.Never>(
+                    run: { _ in .init(status: .notFound) }
+                )
+            ).collapsed()
         )
         do throws(Either<Swift.Never, HTTP.Coding.Error>) {
             _ = try await invalid.greet(.init("Ada"))
