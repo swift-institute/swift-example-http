@@ -1,12 +1,12 @@
+import Coder_Primitive
 import Client
 import Either_Primitives
 import Example
-import Example_Application
-import Example_Application_Remote
 import Example_Client
 import Example_Client_Remote
 import Example_Counter
 import Example_Counter_Client
+import Example_Counter_Client_Remote
 import Example_Counter_HTTP
 import Example_Greeting
 import Example_Greeting_Client
@@ -59,9 +59,10 @@ struct `Example.HTTP Tests` {
     }
 
     @Test
-    func `HTTP clients and responders compose into one application`() async throws {
+    func `one endpoint drives equivalent local, remote, and responder behavior`() async throws {
         typealias ExternalFailure = Either<HTTP.Coding.Error, HTTP.Coding.Error>
 
+        let local = Self.client(from: .init(0))
         let service = Self.client(from: .init(0))
         let remote = Example.Client.Remote<ExternalFailure>(
             greeting: Example.Greeting.Endpoint.remote(
@@ -71,19 +72,21 @@ struct `Example.HTTP Tests` {
                 using: Example.Counter.Endpoint.responder(using: service.counter)
             )
         )
-        let application = Example.Application(remote)
 
-        #expect(
-            try await application(.greet(name: .init("Ada")))
-                == .greeting(.init("Hello, Ada!"))
-        )
-        #expect(
-            try await application(.increment(limit: .init(1)))
-                == .counter(.init(1))
-        )
+        let localGreeting = await local.greeting.greet(.init("Ada"))
+        let remoteGreeting = try await remote.greeting.greet(.init("Ada"))
+        #expect(remoteGreeting == localGreeting)
+
+        let localValue = try await local.counter.increment(limit: .init(1))
+        let remoteValue = try await remote.counter.increment(limit: .init(1))
+        #expect(remoteValue == localValue)
+
+        await #expect(throws: Example.Counter.Error.limit(reached: .init(1))) {
+            _ = try await local.counter.increment(limit: .init(1))
+        }
 
         do throws(Either<ExternalFailure, Example.Counter.Error>) {
-            _ = try await application(.increment(limit: .init(1)))
+            _ = try await remote.counter.increment(limit: .init(1))
             Issue.record("expected a domain refusal")
         } catch {
             #expect(error == .right(.limit(reached: .init(1))))
@@ -113,7 +116,7 @@ struct `Example.HTTP Tests` {
             _ = try await invalid.greet(.init("Ada"))
             Issue.record("expected a coding failure")
         } catch {
-            #expect(error == .right(.response))
+            #expect(error.value == .response)
         }
     }
 }

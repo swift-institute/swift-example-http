@@ -35,14 +35,6 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-institute/swift-example-application.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-institute/swift-example-application-remote.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-foundations/swift-client.git",
             branch: "main"
         ),
@@ -67,10 +59,6 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-primitives/swift-coder-primitives.git",
             branch: "main"
         ),
@@ -79,15 +67,15 @@ let package = Package(
             branch: "main"
         ),
         .package(
+            url: "https://github.com/swift-ietf/swift-rfc-3986.git",
+            branch: "main"
+        ),
+        .package(
             url: "https://github.com/swift-primitives/swift-parser-primitives.git",
             branch: "main"
         ),
         .package(
             url: "https://github.com/swift-primitives/swift-serializer-primitives.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-ietf/swift-rfc-3986.git",
             branch: "main"
         ),
     ],
@@ -108,12 +96,14 @@ let package = Package(
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
                 .product(name: "HTTP Client", package: "swift-http-client"),
                 .product(name: "HTTP Responder", package: "swift-http-responder"),
-                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
-                .product(name: "Coder Witness Primitives", package: "swift-coder-primitives"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
                 .product(name: "Either Primitives", package: "swift-either-primitives"),
                 .product(name: "Parser Primitive", package: "swift-parser-primitives"),
-                .product(name: "Serializer Primitive", package: "swift-serializer-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
+                .product(
+                    name: "Serializer Primitive",
+                    package: "swift-serializer-primitives"
+                ),
             ]
         ),
         .target(
@@ -131,12 +121,14 @@ let package = Package(
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
                 .product(name: "HTTP Client", package: "swift-http-client"),
                 .product(name: "HTTP Responder", package: "swift-http-responder"),
-                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
-                .product(name: "Coder Witness Primitives", package: "swift-coder-primitives"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
                 .product(name: "Either Primitives", package: "swift-either-primitives"),
                 .product(name: "Parser Primitive", package: "swift-parser-primitives"),
-                .product(name: "Serializer Primitive", package: "swift-serializer-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
+                .product(
+                    name: "Serializer Primitive",
+                    package: "swift-serializer-primitives"
+                ),
             ]
         ),
         .testTarget(
@@ -144,29 +136,38 @@ let package = Package(
             dependencies: [
                 "Example Greeting HTTP",
                 "Example Counter HTTP",
+                .product(name: "Client", package: "swift-client"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
                 .product(name: "Example Counter", package: "swift-example"),
-                .product(name: "Example Greeting Client", package: "swift-example-client"),
-                .product(name: "Example Counter Client", package: "swift-example-client"),
                 .product(name: "Example Client", package: "swift-example-client"),
+                .product(
+                    name: "Example Counter Client",
+                    package: "swift-example-client"
+                ),
+                .product(
+                    name: "Example Greeting Client",
+                    package: "swift-example-client"
+                ),
                 .product(name: "Example Client Remote", package: "swift-example-client-remote"),
+                .product(
+                    name: "Example Counter Client Remote",
+                    package: "swift-example-client-remote"
+                ),
                 .product(
                     name: "Example Greeting Client Remote",
                     package: "swift-example-client-remote"
                 ),
-                .product(name: "Example Application", package: "swift-example-application"),
-                .product(
-                    name: "Example Application Remote",
-                    package: "swift-example-application-remote"
-                ),
-                .product(name: "Client", package: "swift-client"),
                 .product(name: "HTTP", package: "swift-http"),
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
                 .product(name: "HTTP Client", package: "swift-http-client"),
+                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
                 .product(name: "Either Primitives", package: "swift-either-primitives"),
                 .product(name: "Parser Primitive", package: "swift-parser-primitives"),
-                .product(name: "Serializer Primitive", package: "swift-serializer-primitives"),
+                .product(
+                    name: "Serializer Primitive",
+                    package: "swift-serializer-primitives"
+                ),
             ]
         ),
     ],

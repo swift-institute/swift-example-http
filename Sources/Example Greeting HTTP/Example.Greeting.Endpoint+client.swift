@@ -15,7 +15,7 @@ extension Example.Greeting.Endpoint {
     public static func remote<TransportFailure: Swift.Error>(
         using transport: HTTP.Client<TransportFailure>
     ) -> Example.Greeting.Client.Remote<Either<TransportFailure, HTTP.Coding.Error>> {
-        let operation: Client<
+        let operation: Client::Client<
             Example.Greeting.Name,
             Example.Greeting.Message,
             Either<Either<TransportFailure, HTTP.Coding.Error>, Swift.Never>
