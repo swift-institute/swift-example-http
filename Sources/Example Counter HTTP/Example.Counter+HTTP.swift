@@ -21,7 +21,7 @@ extension Example.Counter {
             ),
             response: .init(
                 refusalStatus: .badRequest,
-                refusal: Error.coder,
+                refusal: Error.text,
                 successStatus: .ok,
                 success: Value.coder
             )

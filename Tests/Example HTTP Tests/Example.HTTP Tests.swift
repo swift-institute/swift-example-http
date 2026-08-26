@@ -61,6 +61,24 @@ struct `Example.HTTP Tests` {
     }
 
     @Test
+    func `the refusal representation is named, not intrinsic`() throws {
+        // Encoding the refusal as its bare reached-limit number is this
+        // surface's choice, so it is reached through the named representation
+        // rather than a global conformance.
+        let coder = Example.Counter.Error.text
+        var body: HTTP.Coding.Body.Text<Example.Counter.Error>.Buffer = nil
+        try coder.serialize(.limit(reached: .init(3)), into: &body)
+        let canonical = body
+
+        #expect(try coder.parse(&body) == .limit(reached: .init(3)))
+        #expect(body == nil)
+
+        var reserialized: HTTP.Coding.Body.Text<Example.Counter.Error>.Buffer = nil
+        try coder.serialize(.limit(reached: .init(3)), into: &reserialized)
+        #expect(reserialized == canonical)
+    }
+
+    @Test
     func `one endpoint drives equivalent local, remote, and responder behavior`() async throws {
         typealias ExternalFailure = Either<HTTP.Coding.Error, HTTP.Coding.Error>
 
