@@ -14,9 +14,9 @@ extension Example.Greeting: @retroactive HTTP.Routable {
 
     public static var route: some HTTP.Routing<Call> {
         HTTP.Route.Case(\.greet) {
-            HTTP.Route.Method(.post)
-            HTTP.Route.Target(.resource(.init(unchecked: "/greeting")))
-            HTTP.Route.Content(Name.coder)
+            HTTP.Method.post
+            HTTP.Target.resource(.init(unchecked: "/greeting"))
+            HTTP.Content(Name.coder)
         }
     }
 }

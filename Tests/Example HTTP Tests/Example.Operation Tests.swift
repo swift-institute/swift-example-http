@@ -85,14 +85,14 @@ extension Multiple: HTTP.Routable {
 
     static var route: some HTTP.Routing<Call> {
         HTTP.Route.Case(\.greet) {
-            HTTP.Route.Method(.post)
-            HTTP.Route.Target(.resource(.init(unchecked: "/multiple/greet")))
-            HTTP.Route.Content(Example.Greeting.Name.coder)
+            HTTP.Method.post
+            HTTP.Target.resource(.init(unchecked: "/multiple/greet"))
+            HTTP.Content(Example.Greeting.Name.coder)
         }
         HTTP.Route.Case(\.increment) {
-            HTTP.Route.Method(.post)
-            HTTP.Route.Target(.resource(.init(unchecked: "/multiple/increment")))
-            HTTP.Route.Content(Example.Counter.Limit.coder)
+            HTTP.Method.post
+            HTTP.Target.resource(.init(unchecked: "/multiple/increment"))
+            HTTP.Content(Example.Counter.Limit.coder)
         }
     }
 }

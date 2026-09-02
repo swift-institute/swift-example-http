@@ -16,12 +16,12 @@ extension Example.Counter: @retroactive HTTP.Respondable {
 
     public static var response: some HTTP.Replying<Swift.Result<Value, Error>> {
         Coder.Case(Swift.Result<Value, Error>.prisms.failure, absent: .mismatch) {
-            HTTP.Route.Status(.badRequest)
-            HTTP.Route.Content(Error.coder)
+            HTTP.Status.badRequest
+            HTTP.Content(Error.coder)
         }
         Coder.Case(Swift.Result<Value, Error>.prisms.success, absent: .mismatch) {
-            HTTP.Route.Status(.ok)
-            HTTP.Route.Content(Value.coder)
+            HTTP.Status.ok
+            HTTP.Content(Value.coder)
         }
     }
 }

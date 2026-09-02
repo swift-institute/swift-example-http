@@ -16,8 +16,8 @@ extension Example.Greeting: @retroactive HTTP.Respondable {
 
     public static var response: some HTTP.Replying<Swift.Result<Message, Swift.Never>> {
         Coder.Case(Swift.Result<Message, Swift.Never>.prisms.success, absent: .mismatch) {
-            HTTP.Route.Status(.ok)
-            HTTP.Route.Content(Message.coder)
+            HTTP.Status.ok
+            HTTP.Content(Message.coder)
         }
     }
 }
