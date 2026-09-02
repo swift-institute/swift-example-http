@@ -1,17 +1,22 @@
-public import Byte_Primitive
-import Example_Client
+import Call_Algebra
 public import Example
 public import Example_Greeting
-import Example_Greeting_Client
+public import Example_Greeting_Client
 public import HTTP
-public import HTTP_Router
+public import HTTP_Coder
+import Parser
+import Parser_Skip
+import Serializer
 import RFC_3986
 public import RFC_9110
 
 extension Example.Greeting: @retroactive HTTP.Routable {
-    public static var router: some HTTP.Routing<Self, [Byte]> {
-        HTTP.Target.resource(.init(unchecked: "/greeting"))
-        HTTP.Method.post
-        HTTP.Content(Name.self)
+
+    public static var route: some HTTP.Routing<Call> {
+        HTTP.Route.Case(\.greet) {
+            HTTP.Route.Method(.post)
+            HTTP.Route.Target(.resource(.init(unchecked: "/greeting")))
+            HTTP.Route.Content(Name.coder)
+        }
     }
 }

@@ -1,17 +1,22 @@
-public import Byte_Primitive
-import Example_Client
+import Call_Algebra
 public import Example
 public import Example_Counter
-import Example_Counter_Client
+public import Example_Counter_Client
 public import HTTP
-public import HTTP_Router
+public import HTTP_Coder
+import Parser
+import Parser_Skip
+import Serializer
 import RFC_3986
 public import RFC_9110
 
 extension Example.Counter: @retroactive HTTP.Routable {
-    public static var router: some HTTP.Routing<Self, [Byte]> {
-        HTTP.Target.resource(.init(unchecked: "/counter"))
-        HTTP.Method.post
-        HTTP.Content(Limit.self)
+
+    public static var route: some HTTP.Routing<Call> {
+        HTTP.Route.Case(\.increment) {
+            HTTP.Route.Method(.post)
+            HTTP.Route.Target(.resource(.init(unchecked: "/counter")))
+            HTTP.Route.Content(Limit.coder)
+        }
     }
 }

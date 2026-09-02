@@ -19,7 +19,43 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            url: "https://github.com/swift-atoms/swift-ascii.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-byte.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-coder.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-optic.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-parser.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-serializer.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-ascii-coder.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-ascii-parser.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-byte-parser.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-optic-coder.git",
             branch: "main"
         ),
         .package(
@@ -31,35 +67,15 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-call.git",
+            url: "https://github.com/swift-compositions/swift-call.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-http.git",
+            url: "https://github.com/swift-compositions/swift-http.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-coder.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-foundations/swift-http-coder.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-foundations/swift-http-router.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-primitives/swift-coder-primitives.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-primitives/swift-parser-primitives.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-primitives/swift-optic-primitives.git",
+            url: "https://github.com/swift-compositions/swift-http-coder.git",
             branch: "main"
         ),
         .package(
@@ -75,61 +91,52 @@ let package = Package(
         .target(
             name: "Example HTTP",
             dependencies: [
-                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
+                .product(name: "ASCII", package: "swift-ascii"),
+                .product(name: "ASCII Decimal Coder", package: "swift-ascii-coder"),
+                .product(name: "ASCII Decimal Parser", package: "swift-ascii-parser"),
+                .product(name: "Byte", package: "swift-byte"),
+                .product(name: "Byte Parser", package: "swift-byte-parser"),
+                .product(name: "Call", package: "swift-call"),
+                .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
                 .product(name: "Example Counter", package: "swift-example"),
                 .product(name: "Example Client", package: "swift-example-client"),
                 .product(name: "Example Greeting Client", package: "swift-example-client"),
                 .product(name: "Example Counter Client", package: "swift-example-client"),
-                .product(name: "Coder", package: "swift-coder"),
                 .product(name: "HTTP", package: "swift-http"),
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
-                .product(name: "HTTP Router", package: "swift-http-router"),
-                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
-                .product(name: "Coder Parser Primitives", package: "swift-coder-primitives"),
-                .product(name: "Optic Primitives", package: "swift-optic-primitives"),
-                .product(name: "RFC 9110", package: "swift-rfc-9110"),
+                .product(name: "Optic", package: "swift-optic"),
+                .product(name: "Optic Coder", package: "swift-optic-coder"),
+                .product(name: "Parser", package: "swift-parser"),
+                .product(name: "Parser Skip", package: "swift-parser"),
+                .product(name: "Serializer", package: "swift-serializer"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
-                .product(
-                    name: "Parser Conversion Primitives",
-                    package: "swift-parser-primitives"
-                ),
-                .product(
-                    name: "Parser Error Primitives",
-                    package: "swift-parser-primitives"
-                ),
+                .product(name: "RFC 9110", package: "swift-rfc-9110"),
             ]
         ),
         .testTarget(
             name: "Example HTTP Tests",
             dependencies: [
                 "Example HTTP",
-                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
+                .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Call", package: "swift-call"),
                 .product(name: "Coder", package: "swift-coder"),
-                .product(name: "Example Client", package: "swift-example-client"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
                 .product(name: "Example Counter", package: "swift-example"),
+                .product(name: "Example Client", package: "swift-example-client"),
                 .product(name: "Example Greeting Client", package: "swift-example-client"),
                 .product(name: "Example Counter Client", package: "swift-example-client"),
                 .product(name: "HTTP", package: "swift-http"),
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
-                .product(name: "HTTP Router", package: "swift-http-router"),
-                .product(name: "Coder Primitive", package: "swift-coder-primitives"),
-                .product(name: "Coder Parser Primitives", package: "swift-coder-primitives"),
-                .product(name: "Optic Primitives", package: "swift-optic-primitives"),
-                .product(name: "RFC 9110", package: "swift-rfc-9110"),
+                .product(name: "Optic", package: "swift-optic"),
+                .product(name: "Optic Coder", package: "swift-optic-coder"),
+                .product(name: "Parser", package: "swift-parser"),
+                .product(name: "Parser Skip", package: "swift-parser"),
+                .product(name: "Serializer", package: "swift-serializer"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
-                .product(
-                    name: "Parser Conversion Primitives",
-                    package: "swift-parser-primitives"
-                ),
-                .product(
-                    name: "Parser Error Primitives",
-                    package: "swift-parser-primitives"
-                ),
+                .product(name: "RFC 9110", package: "swift-rfc-9110"),
             ]
         ),
     ],

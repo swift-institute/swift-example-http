@@ -1,20 +1,24 @@
-public import Byte_Primitive
-import Example_Client
+import Call_Algebra
 public import Example
+public import Example_Client
 import Example_Counter
 import Example_Counter_Client
 import Example_Greeting
 import Example_Greeting_Client
 public import HTTP
-public import HTTP_Router
+public import HTTP_Coder
+import Parser
+import Parser_Skip
+import Serializer
 
 extension Example: @retroactive HTTP.Routable {
-    public static var router: some HTTP.Routes<Self, [Byte]> {
-        HTTP.Route(\.greeting) {
-            Greeting.router
+
+    public static var route: some HTTP.Routing<Call> {
+        HTTP.Route.Case(\.greeting) {
+            Greeting.route
         }
-        HTTP.Route(\.counter) {
-            Counter.router
+        HTTP.Route.Case(\.counter) {
+            Counter.route
         }
     }
 }
