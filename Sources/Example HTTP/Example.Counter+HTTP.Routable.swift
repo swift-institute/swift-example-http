@@ -14,7 +14,7 @@ extension Example.Counter: @retroactive HTTP.Routable {
 
     public static var route: some HTTP.Routing<Call> {
         HTTP.Route.Case(\.increment) {
-            HTTP.Method.post
+            .post
             HTTP.Target.resource(.init(unchecked: "/counter"))
             HTTP.Content(Limit.coder)
         }
