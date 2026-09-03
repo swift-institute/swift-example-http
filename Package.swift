@@ -68,6 +68,10 @@ let package = Package(
             branch: "main"
         ),
         .package(
+            url: "https://github.com/swift-atoms/swift-either.git",
+            branch: "main"
+        ),
+        .package(
             url: "https://github.com/swift-compositions/swift-http.git",
             branch: "main"
         ),
@@ -95,6 +99,7 @@ let package = Package(
                 .product(name: "Byte Standard Library Integration", package: "swift-byte"),
                 .product(name: "Cursor Standard Library Integration", package: "swift-cursor"),
                 .product(name: "Operation", package: "swift-operation"),
+                .product(name: "Either", package: "swift-either"),
                 .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
@@ -119,6 +124,7 @@ let package = Package(
                 "Example HTTP",
                 .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Operation", package: "swift-operation"),
+                .product(name: "Either", package: "swift-either"),
                 .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),

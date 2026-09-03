@@ -1,4 +1,5 @@
 import Byte
+import Either
 import Example
 import Example_Counter
 import Example_Greeting
@@ -33,7 +34,9 @@ enum Multiple {
     }
 }
 
-extension Multiple.Call {
+extension Multiple.Call: Operation.Coproduct {
+
+    typealias Operations = Either<Multiple.Greet, Multiple.Increment>
 
     struct Prisms {
         var greet: Optic<Multiple.Call, Multiple.Call, Operation.Application<Multiple.Greet>, Operation.Application<Multiple.Greet>>.Prism {
