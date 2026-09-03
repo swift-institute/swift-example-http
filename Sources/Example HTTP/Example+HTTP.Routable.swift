@@ -14,10 +14,10 @@ import Serializer
 extension Example: @retroactive HTTP.Routable {
 
     public static var route: some HTTP.Routing<Call> {
-        HTTP.Route.Case(Call.prisms.greeting) {
+        HTTP.Route.Case(\.greeting) {
             Greeting.route
         }
-        HTTP.Route.Case(Call.prisms.counter) {
+        HTTP.Route.Case(\.counter) {
             Counter.route
         }
     }

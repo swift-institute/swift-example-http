@@ -14,7 +14,7 @@ public import RFC_9110
 extension Example.Greeting: @retroactive HTTP.Routable {
 
     public static var route: some HTTP.Routing<Call> {
-        HTTP.Route.Case(Call.prisms.greet) {
+        HTTP.Route.Case(\.greet) {
             .post
             HTTP.Target.resource(.init(unchecked: "/greeting"))
             HTTP.Content(Name.coder)

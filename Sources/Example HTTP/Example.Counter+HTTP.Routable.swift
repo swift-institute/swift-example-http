@@ -14,7 +14,7 @@ public import RFC_9110
 extension Example.Counter: @retroactive HTTP.Routable {
 
     public static var route: some HTTP.Routing<Call> {
-        HTTP.Route.Case(Call.prisms.increment) {
+        HTTP.Route.Case(\.increment) {
             .post
             HTTP.Target.resource(.init(unchecked: "/counter"))
             HTTP.Content(Limit.coder)
