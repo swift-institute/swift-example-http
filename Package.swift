@@ -64,7 +64,7 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-compositions/swift-call.git",
+            url: "https://github.com/swift-atoms/swift-operation.git",
             branch: "main"
         ),
         .package(
@@ -92,10 +92,9 @@ let package = Package(
                 .product(name: "ASCII Decimal Coder", package: "swift-ascii-coder"),
                 .product(name: "ASCII Decimal Parser", package: "swift-ascii-parser"),
                 .product(name: "Byte", package: "swift-byte"),
-                .product(name: "Byte", package: "swift-byte"),
                 .product(name: "Byte Standard Library Integration", package: "swift-byte"),
                 .product(name: "Cursor Standard Library Integration", package: "swift-cursor"),
-                .product(name: "Call", package: "swift-call"),
+                .product(name: "Operation", package: "swift-operation"),
                 .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),
@@ -119,7 +118,7 @@ let package = Package(
             dependencies: [
                 "Example HTTP",
                 .product(name: "Byte", package: "swift-byte"),
-                .product(name: "Call", package: "swift-call"),
+                .product(name: "Operation", package: "swift-operation"),
                 .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Example", package: "swift-example"),
                 .product(name: "Example Greeting", package: "swift-example"),

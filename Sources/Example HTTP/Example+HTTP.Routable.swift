@@ -1,4 +1,3 @@
-import Call_Algebra
 public import Example
 public import Example_Client
 import Example_Counter
@@ -7,6 +6,7 @@ import Example_Greeting
 import Example_Greeting_Client
 public import HTTP
 public import HTTP_Coder
+import Optic
 import Parser
 import Parser_Skip
 import Serializer
@@ -14,10 +14,10 @@ import Serializer
 extension Example: @retroactive HTTP.Routable {
 
     public static var route: some HTTP.Routing<Call> {
-        HTTP.Route.Case(\.greeting) {
+        HTTP.Route.Case(Call.prisms.greeting) {
             Greeting.route
         }
-        HTTP.Route.Case(\.counter) {
+        HTTP.Route.Case(Call.prisms.counter) {
             Counter.route
         }
     }
