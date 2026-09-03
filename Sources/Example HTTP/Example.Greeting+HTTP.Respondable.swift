@@ -4,7 +4,7 @@ public import Example_Greeting
 public import Example_Greeting_Client
 public import HTTP
 public import HTTP_Coder
-public import Operation
+import Operation
 import Optic
 import Optic_Coder
 import Parser

@@ -1,4 +1,5 @@
 import Byte
+import Either
 import Example
 import Example_Client
 import Example_Counter
@@ -24,9 +25,10 @@ private func input<Call, Index: Operation.Symbol>(
     _ prism: Optic<Call, Call, Operation.Application<Index>, Operation.Application<Index>>.Prism,
     of call: Call
 ) -> Index.Input? where Index.Input: Copyable & Escapable {
-    switch prism.match(call) {
-    case .right(let application): application.input
-    case .left: nil
+    let matched = prism.match(call)
+    switch consume matched {
+    case .right(let application): return application.input
+    case .left: return nil
     }
 }
 
@@ -37,11 +39,14 @@ struct `Example.HTTP Tests` {
     func `the root router is bidirectional over both domains`() throws {
         let greeting = Example.Call.greeting(.greet(.init("Ada")))
         let greetingRequest = try HTTP.request(Example.self, for: greeting)
+        let greetingRequestAgain = try HTTP.request(Example.self, for: greeting)
         #expect(greetingRequest.method == .post)
         #expect(greetingRequest.target == .resource(.init(unchecked: "/greeting")))
         #expect(greetingRequest.content == bytes("Ada"))
+        #expect(greetingRequestAgain == greetingRequest)
         let routedGreeting = try HTTP.route(Example.self, greetingRequest)
-        switch Example.Call.prisms.greeting.match(routedGreeting) {
+        let greetingBranch = Example.Call.prisms.greeting.match(routedGreeting)
+        switch consume greetingBranch {
         case .right(let call):
             #expect(input(Example.Greeting.Call.prisms.greet, of: call) == .init("Ada"))
         case .left:
@@ -53,7 +58,8 @@ struct `Example.HTTP Tests` {
         #expect(counterRequest.target == .resource(.init(unchecked: "/counter")))
         #expect(counterRequest.content == bytes("3"))
         let routedCounter = try HTTP.route(Example.self, counterRequest)
-        switch Example.Call.prisms.counter.match(routedCounter) {
+        let counterBranch = Example.Call.prisms.counter.match(routedCounter)
+        switch consume counterBranch {
         case .right(let call):
             #expect(input(Example.Counter.Call.prisms.increment, of: call) == .init(3))
         case .left:
@@ -79,13 +85,13 @@ struct `Example.HTTP Tests` {
     func `an unknown request is a mismatch and a bad payload commits`() throws {
         let unknown = HTTP.Route.Request(method: .get, target: .resource(.init(unchecked: "/nope")))
         #expect(throws: HTTP.Route.Error.mismatch) {
-            try HTTP.route(Example.self, unknown)
+            _ = try HTTP.route(Example.self, unknown)
         }
 
         var malformed = HTTP.Route.Request(method: .post, target: .resource(.init(unchecked: "/counter")))
         malformed.content = bytes("three")
         #expect(throws: HTTP.Route.Error.malformed) {
-            try HTTP.route(Example.self, malformed)
+            _ = try HTTP.route(Example.self, malformed)
         }
     }
 
