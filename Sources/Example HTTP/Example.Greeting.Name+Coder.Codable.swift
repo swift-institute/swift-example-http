@@ -1,5 +1,6 @@
 public import Byte
-public import Byte_Parser
+import Byte_Standard_Library_Integration
+import Cursor_Standard_Library_Integration
 public import Coder
 public import Example
 public import Example_Greeting
@@ -17,7 +18,7 @@ extension Example.Greeting.Name: Coder.Codable {
 
         public init() {}
 
-        public var body: some Coding<Byte.Input, Example.Greeting.Name, [Byte], HTTP.Message.Content.Error> {
+        public var body: some Coding<ArraySlice<Byte>, Example.Greeting.Name, [Byte], HTTP.Message.Content.Error> {
             HTTP.Message.Content.Text().map(
                 to: { Example.Greeting.Name($0) },
                 from: { $0.underlying }

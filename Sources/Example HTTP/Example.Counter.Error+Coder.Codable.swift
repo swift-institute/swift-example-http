@@ -1,7 +1,8 @@
 public import ASCII
 public import ASCII_Decimal_Parser
 public import Byte
-public import Byte_Parser
+import Byte_Standard_Library_Integration
+import Cursor_Standard_Library_Integration
 public import Coder
 public import Example
 public import Example_Counter
@@ -16,7 +17,7 @@ extension Example.Counter.Error: Coder.Codable {
 
         public init() {}
 
-        public var body: some Coding<Byte.Input, Example.Counter.Error, [Byte], ASCII.Decimal.Error> {
+        public var body: some Coding<ArraySlice<Byte>, Example.Counter.Error, [Byte], ASCII.Decimal.Error> {
             Example.Counter.Limit.coder.map(
                 to: { Example.Counter.Error.limit(reached: $0) },
                 from: { error in

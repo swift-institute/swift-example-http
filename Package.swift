@@ -18,6 +18,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-atoms/swift-cursor.git", branch: "main"),
         .package(
             url: "https://github.com/swift-atoms/swift-ascii.git",
             branch: "main"
@@ -48,10 +49,6 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/swift-molecules/swift-ascii-parser.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-molecules/swift-byte-parser.git",
             branch: "main"
         ),
         .package(
@@ -95,7 +92,9 @@ let package = Package(
                 .product(name: "ASCII Decimal Coder", package: "swift-ascii-coder"),
                 .product(name: "ASCII Decimal Parser", package: "swift-ascii-parser"),
                 .product(name: "Byte", package: "swift-byte"),
-                .product(name: "Byte Parser", package: "swift-byte-parser"),
+                .product(name: "Byte", package: "swift-byte"),
+                .product(name: "Byte Standard Library Integration", package: "swift-byte"),
+                .product(name: "Cursor Standard Library Integration", package: "swift-cursor"),
                 .product(name: "Call", package: "swift-call"),
                 .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Example", package: "swift-example"),
