@@ -12,19 +12,7 @@ import Serializer
 
 extension Example.Greeting.Message: Coder.Codable {
 
-    public struct Coder: Coding {
-
-        public typealias Failure = HTTP.Message.Content.Error
-
-        public init() {}
-
-        public var body: some Coding<ArraySlice<Byte>, Example.Greeting.Message, [Byte], HTTP.Message.Content.Error> {
-            HTTP.Message.Content.Text().map(
-                to: { Example.Greeting.Message($0) },
-                from: { $0.underlying }
-            )
-        }
+    public static var coder: some Coding<ArraySlice<Byte>, Self, [Byte], HTTP.Message.Content.Error> {
+        HTTP.Message.Content.Text().map(to: { Self($0) }, from: { $0.underlying })
     }
-
-    public static var coder: Coder { .init() }
 }
