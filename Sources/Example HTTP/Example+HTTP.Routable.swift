@@ -3,7 +3,7 @@ import Example_Counter
 import Example_Greeting
 public import Example_Signature
 public import HTTP
-public import HTTP_Coder
+public import HTTP_Router
 
 extension Example: @retroactive HTTP.Routable {
 
