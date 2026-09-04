@@ -1,17 +1,13 @@
-public import ASCII
-public import ASCII_Decimal_Parser
 public import Byte
-import Byte_Standard_Library_Integration
-import Cursor_Standard_Library_Integration
 public import Coder
 public import Example
 public import Example_Counter
-import Parser
-import Serializer
+public import String_Coder
+import Tagged_Coder
 
 extension Example.Counter.Error: Coder.Codable {
 
-    public static var coder: some Coding<ArraySlice<Byte>, Self, [Byte], ASCII.Decimal.Error> {
+    public static var coder: some Coding<ArraySlice<Byte>, Self, [Byte], Swift.String.Coder.Error> {
         Example.Counter.Limit.coder.map(
             to: { .limit(reached: $0) },
             from: { error in

@@ -1,25 +1,23 @@
+public import Coder
 public import Example
 public import Example_Counter
-public import Example_Counter_Client
+public import Example_Counter_Signature
 public import HTTP
 public import HTTP_Coder
-public import HTTP_Route_Derivation
-import Operation
-import Optic
 import Parser
 import Parser_Skip
-import Serializer
-import RFC_3986
-public import RFC_9110
+import Tagged_Coder
 
 extension Example.Counter: @retroactive HTTP.Routable {
 
-    @Routes @Remote
-    public static var router: some HTTP.Routing<Call> {
-        HTTP.Route.Case(\.increment) {
-            .post
-            HTTP.Target.resource(.init(unchecked: "/counter"))
-            HTTP.Content(Limit.coder)
-        }
+    public static var router: some HTTP.Router.`Protocol`<Call> {
+        Call.Router(
+            absent: .mismatch,
+            increment: HTTP.route {
+                .post
+                HTTP.Target(unchecked: "/counter")
+                HTTP.Content(Limit.self)
+            }
+        )
     }
 }
