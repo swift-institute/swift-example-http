@@ -6,6 +6,7 @@ import Example_Greeting
 import Example_Greeting_Client
 public import HTTP
 public import HTTP_Coder
+public import HTTP_Route_Derivation
 import Optic
 import Parser
 import Parser_Skip
@@ -13,12 +14,13 @@ import Serializer
 
 extension Example: @retroactive HTTP.Routable {
 
-    public static var route: some HTTP.Routing<Call> {
+    @Routes @Remote
+    public static var router: some HTTP.Routing<Call> {
         HTTP.Route.Case(\.greeting) {
-            Greeting.route
+            Greeting.router
         }
         HTTP.Route.Case(\.counter) {
-            Counter.route
+            Counter.router
         }
     }
 }

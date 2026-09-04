@@ -1,5 +1,4 @@
 import Byte
-import Either
 import Example
 import Example_Client
 import Example_Counter
@@ -10,111 +9,89 @@ import Example_HTTP
 import HTTP
 import HTTP_Coder
 import Operation
-import Optic
-import Parser
 import RFC_3986
 import RFC_9110
-import Serializer
 import Testing
 
 private func bytes(_ text: String) -> [Byte] {
     text.utf8.map(Byte.init(bitPattern:))
 }
 
-private func input<Call, Index: Operation.Symbol>(
-    _ prism: Optic<Call, Call, Operation.Application<Index>, Operation.Application<Index>>.Prism,
-    of call: Call
-) -> Index.Input? where Index.Input: Copyable & Escapable {
-    let matched = prism.match(call)
-    switch consume matched {
-    case .right(let application): return application.input
-    case .left: return nil
-    }
-}
-
 @Suite
 struct `Example.HTTP Tests` {
 
     @Test
-    func `the root router is bidirectional over both domains`() throws {
-        let greeting = Example.Call.greeting(.greet(.init("Ada")))
-        let greetingRequest = try HTTP.request(Example.self, for: greeting)
-        let greetingRequestAgain = try HTTP.request(Example.self, for: greeting)
-        #expect(greetingRequest.method == .post)
-        #expect(greetingRequest.target == .resource(.init(unchecked: "/greeting")))
-        #expect(greetingRequest.content == bytes("Ada"))
-        #expect(greetingRequestAgain == greetingRequest)
-        let routedGreeting = try HTTP.route(Example.self, greetingRequest)
-        let greetingBranch = Example.Call.prisms.greeting.match(routedGreeting)
-        switch consume greetingBranch {
-        case .right(let call):
-            #expect(input(Example.Greeting.Call.prisms.greet, of: call) == .init("Ada"))
-        case .left:
-            Issue.record("expected the greeting branch")
-        }
+    func `a call prints as a request and routes back`() throws {
+        let request = try HTTP.request(Example.self, for: .counter(.increment(limit: .init(3))))
+        #expect(request.method == .post)
+        #expect(request.target == .resource(.init(unchecked: "/counter")))
+        #expect(request.content == bytes("3"))
 
-        let counter = Example.Call.counter(.increment(limit: .init(3)))
-        let counterRequest = try HTTP.request(Example.self, for: counter)
-        #expect(counterRequest.target == .resource(.init(unchecked: "/counter")))
-        #expect(counterRequest.content == bytes("3"))
-        let routedCounter = try HTTP.route(Example.self, counterRequest)
-        let counterBranch = Example.Call.prisms.counter.match(routedCounter)
-        switch consume counterBranch {
-        case .right(let call):
-            #expect(input(Example.Counter.Call.prisms.increment, of: call) == .init(3))
-        case .left:
+        switch try HTTP.route(Example.self, request) {
+        case .counter(.increment(let increment)):
+            #expect(increment.input == .init(3))
+        case .greeting:
             Issue.record("expected the counter branch")
         }
     }
 
     @Test
-    func `operation routes code their exact inputs`() throws {
-        var request = HTTP.Route.Request.blank
-        try Example.Greeting.route.serialize(.greet(.init("Ada")), into: &request)
-        var input = request
-        #expect(Example_HTTP_Tests.input(Example.Greeting.Call.prisms.greet, of: try Example.Greeting.route.parse(&input)) == .init("Ada"))
-        #expect(input.content == nil)
+    func `the site router embeds the api beside its pages`() throws {
+        let api = try HTTP.request(Example.Route.self, for: .api(.greeting(.greet(.init("Ada")))))
+        let domain = try HTTP.request(Example.self, for: .greeting(.greet(.init("Ada"))))
+        #expect(api == domain)
 
-        var counter = HTTP.Route.Request.blank
-        try Example.Counter.route.serialize(.increment(limit: .init(3)), into: &counter)
-        var counterInput = counter
-        #expect(Example_HTTP_Tests.input(Example.Counter.Call.prisms.increment, of: try Example.Counter.route.parse(&counterInput)) == .init(3))
+        let home = try HTTP.request(Example.Route.self, for: .home)
+        #expect(home.method == .get)
+        #expect(home.content == nil)
+        guard case .home = try HTTP.route(Example.Route.self, home) else {
+            Issue.record("expected the home page")
+            return
+        }
+        guard case .api(.greeting(.greet(let greet))) = try HTTP.route(Example.Route.self, api) else {
+            Issue.record("expected the greeting operation")
+            return
+        }
+        #expect(greet.input == .init("Ada"))
+    }
+
+    @Test
+    func `links come from the same router`() throws {
+        #expect(try HTTP.target(Example.Route.self, for: .home) == .resource(.init(unchecked: "/")))
+        #expect(
+            try HTTP.target(Example.Route.self, for: .api(.counter(.increment(limit: .init(1)))))
+                == .resource(.init(unchecked: "/counter"))
+        )
     }
 
     @Test
     func `an unknown request is a mismatch and a bad payload commits`() throws {
         let unknown = HTTP.Route.Request(method: .get, target: .resource(.init(unchecked: "/nope")))
         #expect(throws: HTTP.Route.Error.mismatch) {
-            _ = try HTTP.route(Example.self, unknown)
+            _ = try HTTP.route(Example.Route.self, unknown)
         }
 
         var malformed = HTTP.Route.Request(method: .post, target: .resource(.init(unchecked: "/counter")))
         malformed.content = bytes("three")
         #expect(throws: HTTP.Route.Error.malformed) {
-            _ = try HTTP.route(Example.self, malformed)
+            _ = try HTTP.route(Example.Route.self, malformed)
         }
     }
 
     @Test
-    func `responses are bidirectional`() throws {
-        var greeting = HTTP.Route.Response.blank
-        try Example.Greeting.Greet.response.serialize(.success(.init("Hello, Ada!")), into: &greeting)
-        #expect(greeting.status == .ok)
-        #expect(greeting.content == bytes("Hello, Ada!"))
-        var greetingInput = greeting
-        #expect(try Example.Greeting.Greet.response.parse(&greetingInput) == .success(.init("Hello, Ada!")))
+    func `a value and a refusal become responses`() throws {
+        let value = try HTTP.Route.Response.ok(Example.Counter.Value(4))
+        #expect(value.status == .ok)
+        #expect(value.content == bytes("4"))
+        #expect(try value.decoded(as: Example.Counter.Value.self) == .init(4))
 
-        var refusal = HTTP.Route.Response.blank
-        try Example.Counter.Increment.response.serialize(.failure(.limit(reached: .init(3))), into: &refusal)
+        let refusal = try HTTP.Route.Response.badRequest(Example.Counter.Error.limit(reached: .init(3)))
         #expect(refusal.status == .badRequest)
         #expect(refusal.content == bytes("3"))
-        var refusalInput = refusal
-        #expect(try Example.Counter.Increment.response.parse(&refusalInput) == .failure(.limit(reached: .init(3))))
+        #expect(try refusal.decoded(as: Example.Counter.Error.self) == .limit(reached: .init(3)))
 
-        var value = HTTP.Route.Response.blank
-        try Example.Counter.Increment.response.serialize(.success(.init(4)), into: &value)
-        #expect(value.status == .ok)
-        var valueInput = value
-        #expect(try Example.Counter.Increment.response.parse(&valueInput) == .success(.init(4)))
+        let empty = HTTP.Route.Response.ok()
+        #expect(empty.status == .ok)
+        #expect(empty.content == nil)
     }
 }
