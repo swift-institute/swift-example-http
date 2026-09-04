@@ -25,6 +25,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-parser.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-serializer.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-tagged.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-byte-coder.git", branch: "main"),
         .package(url: "https://github.com/swift-molecules/swift-string-coder.git", branch: "main"),
         .package(url: "https://github.com/swift-molecules/swift-tagged-coder.git", branch: "main"),
         .package(url: "https://github.com/swift-institute/swift-example.git", branch: "main"),
@@ -38,6 +39,7 @@ let package = Package(
             name: "Example HTTP",
             dependencies: [
                 .product(name: "Byte", package: "swift-byte"),
+                .product(name: "Byte Coder", package: "swift-byte-coder"),
                 .product(name: "Operation", package: "swift-operation"),
                 .product(name: "Either", package: "swift-either"),
                 .product(name: "Coder", package: "swift-coder"),
