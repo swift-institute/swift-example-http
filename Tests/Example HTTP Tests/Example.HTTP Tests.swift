@@ -1,24 +1,14 @@
 import Byte
+import Coder
+import Either
 import Example
-import Example_Counter
-import Example_Counter_Signature
-import Example_Greeting
-import Example_Greeting_Signature
 import Example_HTTP
-import Example_Signature
 import HTTP
-import HTTP_Reply
 import HTTP_Router
 import Operation
 import RFC_9110
 import Tagged
-import Tagged_Standard_Library_Integration
-import Tagged_Coder
 import Testing
-
-private func bytes(_ text: String) -> [Byte] {
-    text.utf8.map(Byte.init(bitPattern:))
-}
 
 @Suite
 struct `Example.HTTP Tests` {
@@ -28,11 +18,11 @@ struct `Example.HTTP Tests` {
         let request = try HTTP.request(Example.self, for: .counter(.increment(limit: 3)))
         #expect(request.method == .post)
         #expect(request.target == HTTP.Target(unchecked: "/counter"))
-        #expect(request.content == bytes("3"))
+        #expect(request.content == Array("3".utf8).map(Byte.init(bitPattern:)))
 
         switch try HTTP.route(Example.self, request) {
         case .counter(.increment(let increment)):
-            #expect(increment.input == 3)
+            #expect(increment.input.limit == 3)
         case .greeting:
             Issue.record("expected the counter branch")
         }
@@ -47,11 +37,11 @@ struct `Example.HTTP Tests` {
             Issue.record("expected the greeting operation")
             return
         }
-        #expect(greet.input == "Ada")
+        #expect(greet.input.name == "Ada")
     }
 
     @Test
-    func `links come from the same router`() throws {
+    func `a call's target is available without a request`() throws {
         #expect(
             try HTTP.target(Example.self, for: .counter(.increment(limit: 1)))
                 == HTTP.Target(unchecked: "/counter")
@@ -59,33 +49,32 @@ struct `Example.HTTP Tests` {
     }
 
     @Test
-    func `an unknown request is a mismatch and a bad payload commits`() throws {
+    func `an unknown request is a mismatch`() {
         let unknown = HTTP.Router.Request(method: .get, target: HTTP.Target(unchecked: "/nope"))
-        #expect(throws: HTTP.Router.Error.mismatch) {
-            _ = try HTTP.route(Example.self, unknown)
-        }
 
-        var malformed = HTTP.Router.Request(method: .post, target: HTTP.Target(unchecked: "/counter"))
-        malformed.content = bytes("three")
-        #expect(throws: HTTP.Router.Error.malformed) {
-            _ = try HTTP.route(Example.self, malformed)
+        #expect(throws: HTTP.Router.Error.mismatch) {
+            try HTTP.route(Example.self, unknown)
         }
     }
 
     @Test
-    func `a value and a refusal become responses`() throws {
-        let value = try HTTP.Router.Response.ok(Example.Counter.Value(4))
-        #expect(value.status == .ok)
-        #expect(value.content == bytes("4"))
-        #expect(try value.decoded(as: Example.Counter.Value.self) == 4)
+    func `a malformed payload on a matched route is malformed rather than a mismatch`() {
+        var malformed = HTTP.Router.Request(method: .post, target: HTTP.Target(unchecked: "/counter"))
+        malformed.content = Array("three".utf8).map(Byte.init(bitPattern:))
 
-        let refusal = try HTTP.Router.Response.badRequest(Example.Counter.Error.limit(reached: 3))
-        #expect(refusal.status == .badRequest)
-        #expect(refusal.content == bytes("3"))
-        #expect(try refusal.decoded(as: Example.Counter.Error.self) == .limit(reached: 3))
+        #expect(throws: HTTP.Router.Error.malformed) {
+            try HTTP.route(Example.self, malformed)
+        }
+    }
 
-        let empty = HTTP.Router.Response.ok()
-        #expect(empty.status == .ok)
-        #expect(empty.content == nil)
+    @Test
+    func `a value and a refusal become replies and read back`() throws {
+        var value = HTTP.Router.Response.blank
+        try Example.Counter.incrementReply.serialize(.right(4), into: &value)
+        #expect(try Example.Counter.incrementReply.parse(&value) == .right(4))
+
+        var refusal = HTTP.Router.Response.blank
+        try Example.Counter.incrementReply.serialize(.left(.limit(reached: 3)), into: &refusal)
+        #expect(try Example.Counter.incrementReply.parse(&refusal) == .left(.limit(reached: 3)))
     }
 }
