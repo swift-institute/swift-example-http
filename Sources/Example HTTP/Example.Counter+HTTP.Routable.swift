@@ -7,7 +7,7 @@ public import HTTP_Reply
 public import HTTP_Router
 import Operation
 public import RFC_9110
-import Tagged
+public import Tagged
 
 extension Example.Counter: @retroactive HTTP.Routable {
     public static var router: some HTTP.Router.`Protocol`<Call> {
