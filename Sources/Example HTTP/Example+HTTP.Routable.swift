@@ -3,8 +3,8 @@ public import Example
 public import HTTP
 public import HTTP_Router
 
-extension Example: @retroactive HTTP.Routable {
-    public static var router: some HTTP.Router.`Protocol`<Call> {
+extension Example: @retroactive HTTP::Routable {
+    public static var router: some HTTP::Router.`Protocol`<Call> {
         Coder::Case(Call.cases.greeting.prism, Call.cases.greeting.fold, absent: .mismatch) {
             Greeting.router
         }
